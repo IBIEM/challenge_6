@@ -1,0 +1,257 @@
+---
+title: "Challenge 6"
+subtitle: "Take a newspaper. Take a pair of scissors . . . "
+output:
+  html_document:
+    df_print: paged
+---
+
+# Challenge 6
+The goal of this challenge is to synthesize what you have learned about R and DADA2 to generate a phyloseq object from the map file and the demultiplexed FASTQs that you generated in Challenge 5.  You will find this [overview of the DADA2 pipeline](https://gitlab.oit.duke.edu/IBIEM/IBIEM_2018_2019/blob/master/content/lessons/dada2_pipeline_toc.md) very helpful in completing this assignment.
+
+
+You will find the FASTQs, map file, and an md5 checksum file in `/data/tutorial_data/ibiem2016_subset`.  The name of the map file is `ibiem_2017_map_v3.txt`
+
+You must fill in the chunks below as indicated, but you are free to add other chunks too.  To submit this assignment for full credit you should *commit* and *push*:
+
+1. This file (`challenge6.Rmd`)
+2. The knited version of this file (`challenge6.html`)
+
+These are the *ONLY* files you should include in your repo.  I strongly recommend that you put temporary files in a subdirectory of `/tmp`, for example `/tmp/scratch/challenge6`.  If you don't follow this advice, but instead put temporary files in your repo directory, you *must* be sure not to commit them to your repo. You will lose points if you commit any other files.
+
+# Setup
+## Load Libraries
+```{r}
+
+```
+
+## Paths, Directories, and Shell Variables
+To keep the code readable and portable, it is nice to assign paths to variables.
+
+```{r}
+
+```
+
+
+
+## Checking Files 
+Let's make sure that our demultiplexed files are all where we expect them
+
+```{r view_demuxed_files}
+list.files(demux.dir)
+```
+
+## Filter and Trim
+
+First we read in the names of the fastq files, and perform some string manipulation to get lists of the forward and reverse fastq files in matched order.  We also need to generate a vector of sample names from one of these lists of fastq file paths.
+```{r}
+
+```
+
+Look at the list of "forward" FASTQs to be sure it only contains R1 files
+```{r}
+
+```
+
+Look at the list of "reverse" FASTQs to be sure it only contains R2 files
+```{r}
+
+```
+
+Check to be sure the sample name vector is as expected: sample names are numbers from 1 to 117 (there are a few numbers in this range that are missing)
+```{r}
+
+```
+
+## Examine quality profiles of forward and reverse reads
+
+Please visualize the quality profiles of the *un-demultiplexed* reads (i.e. the full R1 and R2 files before demultiplexing).  Since the R1 and R2 files are subset from a full MiSeq run, each should have 20,000 reads.
+
+## Forward Read Quality Profile
+```{r}
+
+```
+
+
+## Reverse Read Quality Profile
+Now we visualize the quality profile of the reverse reads:
+```{r}
+
+```
+
+## Perform filtering and trimming
+There a few things to note in selecting trimming parameters:
+  1. These reads are only *150bp*, which is shorter than the *250bp* reads in the MiSeqSOP dataset that is used in the official the DADA2 tutorial.
+  2. The quality does not drop off as dramatically at the 3' ends of these reads as in 250bp reads (presumably because these are shorter).
+  3. The amplicon length is approximately 248 - 253bp.
+  4. We need to have at least 20bp overlap at the 3' end for merging.
+
+
+### Generate filenames for the filtered fastq.gz files.
+You need to use the names of the raw (demultiplexed) FASTQ files to generate a vector of names for the filtered FASTQs.  You need separate vectors for the forward and reverse reads.  It is a very good idea to put all the filtered FASTQs in their own directory.
+```{r}
+
+```
+
+
+### Filter the forward and reverse reads
+Now let's do the filtering using the parameters we chose based on the quality plots
+```{r}
+
+```
+
+### Tweak Filtered FASTQ list
+There are a few samples that have very few reads to start with and no reads after filtering. If a sample doesn't have any reads after filtering, `filterAndTrim` doesn't bother to make an empty filtered FASTQ.  We need to manage this, because downstream steps will give us an error if we give them a list of filtered FASTQ filenames that contains names of files that don't actually exist.  We need to regenerate our list of filtered FASTQs based on the filtered FASTQ files that are actually present in the directory. We also need to regenerate `sample.names` from the list of filtered FASTQ files.
+```{r}
+
+```
+
+## Learn the Error Rates
+With that bit of cleanup done, we are ready to build an error model from the filtered FASTQs.  We do this seperately for the R1 and R2 FASTQs, since they have different patterns of errors, as we have seen.
+```{r}
+
+```
+
+It is always worthwhile, as a sanity check if nothing else, to visualize the estimated error rates:
+```{r}
+
+```
+
+The error rates for each possible transition (eg. A->C, A->G, ...) are shown. Points are the observed error rates for each consensus quality score. The black line shows the estimated error rates after convergence. The red line shows the error rates expected under the nominal definition of the Q-value. Here the black line (the estimated rates) fits the observed rates well, and the error rates drop with increased quality as expected. 
+
+Since we are using a small subset of the data, the learned error rates might look funny.  This is OK for now, since we are just doing a pilot analysis.
+
+## Dereplication
+
+Dereplication combines all identical sequencing reads into into "unique sequences" with a corresponding "abundance" tally: the number of reads with that unique sequence. Dereplication substantially reduces computation time for the inference step, since we only need to do inference for unique sequences.  
+
+```{r}
+
+```
+
+### Rename derep objects
+`derepFastq` returns a list of derep objects that are named based on the input filename.  For later steps it is going to be more convenient if each derep object is named with just it's sample name, so let's rename the derep objects using the sample name vector that we created earlier.
+```{r}
+
+```
+
+## Sample Inference
+
+Now you need to infer the true sequences from the dereplicated data. 
+
+```{r}
+
+```
+
+
+## Merge paired reads
+Each pair of R1 and R2 reads represents one observed sequence, so we ultimately need to combine them into a single sequence.  The paired reads allows us to reduce sequence error where the reads overlap because that part of the insert has been sequenced twice so we can compare the two sequences and be sure they agree.  This is why it is desireable to have reads that overlap as much as possible.
+
+```{r}
+
+```
+The results of `mergePairs` is a list of data frames with one data frame for each sample.  Each data frame contains the unique merged sequences observed for that sample along with information about each sequence.
+
+Paired reads that did not perfectly match in the overlapping region were removed by `mergePairs`.
+
+
+## Construct sequence table
+
+We can now construct a sequence table of our samples.  This the equivalent of the OTU table produced by other methods.  The sequence table has a row for each sample and a column for each ASV (the DADA2 equivalent of an OTU), with the count of the number of each ASV observed in each sample.
+```{r}
+
+```
+
+
+Let's check the dimensions of the sequence table.  How many samples are there?  How many ASVs?
+```{r}
+
+```
+
+Let's check the size distribution of the ASVs we have inferred. 
+```{r}
+
+```
+ In most bacteria the amplicon is 253bp, but there is some variation in the length of the V4 region, so we expect some amplicons to be a few bp shorter and longer.  *Note* the ASVs will be shorter by the total amount that you trimmed from the left (5') of the reads, so if you trimmed 5bp from the left of the R1 reads and 7bp from the left of the R2 reads, you expect the amplicons to be about 253bp - 5bp - 7bp.
+ 
+## Remove chimeras
+
+The core `dada` method removes substitution and indel errors, but chimeras remain. Fortunately, the accuracy of the sequences after denoising makes identifying chimeras simpler than it is when dealing with fuzzy OTUs: all sequences which can be exactly reconstructed as a bimera (two-parent chimera) from more abundant sequences.  Let's remove chimeric sequences
+
+```{r}
+
+```
+
+
+## Track reads through the pipeline
+
+As a final check let's make a table showing how many reads remain after each step in the pipeline for each sample.
+
+```{r}
+
+```
+
+
+This is a great place to do a last **sanity check**. Outside of filtering (depending on how stringent you want to be) there should no step in which a majority of reads are lost. If a majority of reads failed to merge, you may need to revisit the `truncLen` parameter used in the filtering step and make sure that the truncated reads span your amplicon. If a majority of reads failed to pass the chimera check, you may need to revisit the removal of primers, as the ambiguous nucleotides in unremoved primers interfere with chimera identification.</div>
+
+
+## Assign taxonomy
+
+Now you can assign taxonomy!  You should use this taxonomy reference files : `/data/references/dada/silva_nr_v128_train_set.fa.gz`
+
+
+```{r}
+
+```
+
+# Phyloseq
+We are now done we the DADA2 pipeline.  Let's put the results into a phyloseq object and save it to an RDS for safe keeping!
+
+## Map Data
+First we need to load the map data using phyloseq's `sample_data()` function. `sample_data()` expects the sample identifiers to be rownames, but our map file has them as a column named "#SampleID", so we need to use a function called `column_to_rownames` to convert this column into rownames
+```{r}
+
+```
+
+## Make a Phyloseq Object
+Now we can construct a phyloseq object directly from the dada2 outputs and the map data frame.
+```{r}
+
+```
+
+And `print` your phyloseq object to be sure it was created correctly
+```{r}
+
+```
+
+Your results from the previous chunk should look like this (number of taxa could be different depending on parameter choices): 
+```
+hyloseq-class experiment-level object
+otu_table()   OTU Table:         [ 450 taxa and 61 samples ]
+sample_data() Sample Data:       [ 61 samples by 22 sample variables ]
+tax_table()   Taxonomy Table:    [ 450 taxa by 6 taxonomic ranks ]
+```
+
+## Save Phyloseq to RDS
+Any R object can be saved to an RDS file.  It is a good idea to do this for any object that is time consuming to generate and is reasonably small in size.  Even when the object was generated reproducibly, it can be frustrating to wait minutes or hours to regenerate when you are ready to perform downstream analyses.
+
+We will do this for our phyloseq object to a file since it is quite small (especially compared to the size of the input FASTQ files), and there were several time consuming computational steps required to generate it.  
+```{r}
+
+```
+
+## Check Phyloseq RDS
+
+We can now confirm that it worked.  Load your phyloseq RDS and `print` it. The results should be the same as above.
+```{r}
+
+```
+
+
+
+# Session Info
+Always print `sessionInfo` for reproducibility!
+```{r}
+
+```
+
