@@ -28,7 +28,7 @@ You will need to:
     [challenge6\_assignment.Rmd](challenge6_assignment.Rmd)
 
 3.  Modify the header of
-    [challenge6\_assignment.Rmd](challenge5_assignment.Rmd) (you might
+    [challenge6\_assignment.Rmd](challenge6_assignment.Rmd) (you might
     want to review the [relevant instructions from Challenge
     1](https://github.com/IBIEM/challenge_1/blob/master/README.Rmd#modify-the-header)
 
@@ -37,10 +37,10 @@ You will need to:
     1](https://github.com/IBIEM/challenge_1/blob/master/README.Rmd#submitting-the-assignment)
     ). You should submit the following:
 
--   `challenge5_assignment.Rmd` : your modified version of the R
+-   `challenge6_assignment.Rmd` : your modified version of the R
     Notebook that you received in your repo
--   `challenge5_assignment.html` : the output from knitting your revised
-    `challenge5_assignment.Rmd`
+-   `challenge6_assignment.html` : the output from knitting your revised
+    `challenge6_assignment.Rmd`
 
 1.  Optional (but *strongly* recommended): frequently commit changes and
     push to GitHub.
