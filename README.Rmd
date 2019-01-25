@@ -1,3 +1,10 @@
+---
+title: "Challenge 6: Take a newspaper. Take a pair of scissors . . . "
+output:
+  md_document:
+  variant: markdown_github
+---
+
 # Challenge 6: Take a newspaper. Take a pair of scissors . . . 
 - *Assigned: January 25, 2019*
 - *Due: at 6pm on February 1, 2019*
