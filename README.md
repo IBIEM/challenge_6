@@ -1,6 +1,7 @@
 # Challenge 7: Take a newspaper. Take a pair of scissors . . . 
-- *Assigned: January 25, 2019*
-- *Due: at 6pm on February 1, 2019*
+
+- *Assigned: October 11, 2019*
+- *Due: at 6pm on November 1, 2019*
 
 ## Assignment
 You should have received an email invitation to access this assigment in Github Classroom.  If you haven't received it, please [post an Issue](https://github.com/IBIEM/community/issues)
@@ -16,8 +17,8 @@ You will need to:
 3. Modify the header of [challenge7_assignment.Rmd](challenge7_assignment.Rmd) (you might want to review the [relevant instructions from Challenge 1](https://github.com/IBIEM/challenge_1/blob/master/README.Rmd#modify-the-header)
 
 4. Submit the Assignment (you might want to review the [relevant instructions from Challenge 1](https://github.com/IBIEM/challenge_1/blob/master/README.Rmd#submitting-the-assignment) ).  You should submit the following:
-  - `challenge7_assignment.Rmd` : your modified version of the R Notebook that you received in your repo
-  - `challenge7_assignment.html` : the output from knitting your revised `challenge7_assignment.Rmd`
+    - `challenge7_assignment.Rmd` : your modified version of the R Notebook that you received in your repo
+    - `challenge7_assignment.html` : the output from knitting your revised `challenge7_assignment.Rmd`
 
 5. Optional (but *strongly* recommended): frequently commit changes and push to GitHub.
 
