@@ -24,7 +24,6 @@ You will need to:
 
 We strongly recommend that you start working on this immediately so you will have time to get any help that you need.  If you have questions about this assignment outside of class, please [post an Issue](https://github.com/IBIEM/community/issues) to the discussion forum.
 
-
 ## Grading
 For this assignment and future assignments we will be checking for:
 
