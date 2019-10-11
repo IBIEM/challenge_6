@@ -1,23 +1,23 @@
 ---
-title: "Challenge 6"
+title: "Challenge 7"
 subtitle: "Take a newspaper. Take a pair of scissors . . . "
 output:
   html_document:
     df_print: paged
 ---
 
-# Challenge 6
-The goal of this challenge is to synthesize what you have learned about R and DADA2 to generate a phyloseq object from the map file and the demultiplexed FASTQs that you generated in Challenge 5.  You will find this [overview of the DADA2 pipeline](https://gitlab.oit.duke.edu/IBIEM/IBIEM_2018_2019/blob/master/content/lessons/dada2_pipeline_toc.md) very helpful in completing this assignment.
+# Challenge 7
+The goal of this challenge is to synthesize what you have learned about R and DADA2 to generate a phyloseq object from the map file and the demultiplexed FASTQs that you generated in Challenge 6.  You will find this [overview of the DADA2 pipeline](https://github.com/ibiem-2019/ibiem_2019_material/blob/master/content/lessons/dada2_pipeline_toc.md) very helpful in completing this assignment.
 
 
 You will find the FASTQs, map file, and an md5 checksum file in `/data/tutorial_data/ibiem2016_subset`.  The name of the map file is `ibiem_2017_map_v3.txt`
 
 You must fill in the chunks below as indicated, but you are free to add other chunks too.  To submit this assignment for full credit you should *commit* and *push*:
 
-1. This file (`challenge6.Rmd`)
-2. The knited version of this file (`challenge6.html`)
+1. This file (`challenge7.Rmd`)
+2. The knited version of this file (`challenge7.html`)
 
-These are the *ONLY* files you should include in your repo.  I strongly recommend that you put temporary files in a subdirectory of `/tmp`, for example `/tmp/scratch/challenge6`.  If you don't follow this advice, but instead put temporary files in your repo directory, you *must* be sure not to commit them to your repo. You will lose points if you commit any other files.
+These are the *ONLY* files you should include in your repo.  I strongly recommend that you make a `scratch` subdirectory in your home directory, then make subdirectories for each project in scratch, for example `~/scratch/challenge7`.  If you don't follow this advice, but instead put temporary files in your repo directory, you *must* be sure not to commit them to your repo, you will lose points if you do.
 
 # Setup
 ## Load Libraries
@@ -81,6 +81,7 @@ Now we visualize the quality profile of the reverse reads:
 
 ## Perform filtering and trimming
 There a few things to note in selecting trimming parameters:
+
   1. These reads are only *150bp*, which is shorter than the *250bp* reads in the MiSeqSOP dataset that is used in the official the DADA2 tutorial.
   2. The quality does not drop off as dramatically at the 3' ends of these reads as in 250bp reads (presumably because these are shorter).
   3. The amplicon length is approximately 248 - 253bp.
@@ -172,7 +173,7 @@ Let's check the size distribution of the ASVs we have inferred.
 ```{r}
 
 ```
- In most bacteria the amplicon is 253bp, but there is some variation in the length of the V4 region, so we expect some amplicons to be a few bp shorter and longer.  *Note* the ASVs will be shorter by the total amount that you trimmed from the left (5') of the reads, so if you trimmed 5bp from the left of the R1 reads and 7bp from the left of the R2 reads, you expect the amplicons to be about 253bp - 5bp - 7bp.
+ In most bacteria the amplicon is 253bp, but there is some variation in the length of the V4 region, so we expect some amplicons to be a few bp shorter and longer.  *Note* the ASVs will be shorter by the total amount that you trimmed from the left (5') of the reads, so if you trimmed 5bp from the left of the R1 reads and 7bp from the left of the R2 reads, you expect the amplicons to be about 253bp - 5bp - 7bp = 241bp.
  
 ## Remove chimeras
 
@@ -187,6 +188,7 @@ The core `dada` method removes substitution and indel errors, but chimeras remai
 
 As a final check let's make a table showing how many reads remain after each step in the pipeline for each sample.
 
+
 ```{r}
 
 ```
@@ -197,7 +199,7 @@ This is a great place to do a last **sanity check**. Outside of filtering (depen
 
 ## Assign taxonomy
 
-Now you can assign taxonomy!  You should use this taxonomy reference files : `/data/references/dada/silva_nr_v128_train_set.fa.gz`
+Now you can assign taxonomy!  You should use this taxonomy reference files : `/data/references/dada/silva_nr_v132_train_set.fa.gz`
 
 
 ```{r}
@@ -226,10 +228,10 @@ And `print` your phyloseq object to be sure it was created correctly
 
 Your results from the previous chunk should look like this (number of taxa could be different depending on parameter choices): 
 ```
-hyloseq-class experiment-level object
-otu_table()   OTU Table:         [ 450 taxa and 61 samples ]
-sample_data() Sample Data:       [ 61 samples by 22 sample variables ]
-tax_table()   Taxonomy Table:    [ 450 taxa by 6 taxonomic ranks ]
+phyloseq-class experiment-level object
+otu_table()   OTU Table:         [ 234 taxa and 107 samples ]
+sample_data() Sample Data:       [ 107 samples by 17 sample variables ]
+tax_table()   Taxonomy Table:    [ 234 taxa by 6 taxonomic ranks ]
 ```
 
 ## Save Phyloseq to RDS
@@ -246,6 +248,8 @@ We can now confirm that it worked.  Load your phyloseq RDS and `print` it. The r
 ```{r}
 
 ```
+
+
 
 
 
