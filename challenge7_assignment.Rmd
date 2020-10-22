@@ -7,7 +7,7 @@ output:
 ---
 
 # Challenge 7
-The goal of this challenge is to synthesize what you have learned about R and DADA2 to generate a phyloseq object from the map file and the demultiplexed FASTQs that you generated in Challenge 6.  You will find this [overview of the DADA2 pipeline](https://github.com/ibiem-2019/ibiem_2019_material/blob/master/content/lessons/dada2_pipeline_toc.md) very helpful in completing this assignment.
+The goal of this challenge is to synthesize what you have learned about R and DADA2 to generate a phyloseq object from the map file and the demultiplexed FASTQs that you generated in Challenge 6.  You will find this [overview of the DADA2 pipeline](https://github.com/ibiem-2020/ibiem_2020_material/blob/master/content/lessons/dada2_pipeline_toc.md) very helpful in completing this assignment.
 
 
 You will find the FASTQs, map file, and an md5 checksum file in `/data/tutorial_data/ibiem2016_subset`.  The name of the map file is `ibiem_2017_map_v3.txt`
@@ -195,6 +195,12 @@ As a final check let's make a table showing how many reads remain after each ste
 
 
 This is a great place to do a last **sanity check**. Outside of filtering (depending on how stringent you want to be) there should no step in which a majority of reads are lost. If a majority of reads failed to merge, you may need to revisit the `truncLen` parameter used in the filtering step and make sure that the truncated reads span your amplicon. If a majority of reads failed to pass the chimera check, you may need to revisit the removal of primers, as the ambiguous nucleotides in unremoved primers interfere with chimera identification.</div>
+
+## Plot Counts through pipeline
+```{r}
+
+```
+
 
 
 ## Assign taxonomy
